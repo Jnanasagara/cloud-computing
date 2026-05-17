@@ -193,7 +193,7 @@ def _import_modules():
         energy_at_slot, slot_to_time
     )
     from phase3_tasks import (
-        generate_tasks, describe_workload, ScheduleResult,
+        generate_tasks, load_azure_tasks, describe_workload, ScheduleResult,
         RoundRobinScheduler, GreedyEDFScheduler
     )
     from phase4_dp_scheduler import DPScheduler, MAX_ENERGY_BUDGET
@@ -207,6 +207,7 @@ def _import_modules():
         "energy_at_slot": energy_at_slot,
         "slot_to_time": slot_to_time,
         "generate_tasks": generate_tasks,
+        "load_azure_tasks": load_azure_tasks,
         "describe_workload": describe_workload,
         "RoundRobinScheduler": RoundRobinScheduler,
         "GreedyEDFScheduler": GreedyEDFScheduler,
@@ -224,6 +225,16 @@ SLOTS_PER_DAY    = M["SLOTS_PER_DAY"]
 slot_to_time     = M["slot_to_time"]
 energy_at_slot   = M["energy_at_slot"]
 carbon_intensity = M["carbon_intensity"]
+
+
+def _load_tasks_for_dashboard(use_azure: bool, azure_path: str, n_tasks: int, seed: int, cloudy: bool):
+    """Load workload for the dashboard, falling back to synthetic if Azure load fails."""
+    if use_azure:
+        try:
+            return M["load_azure_tasks"](filepath=azure_path, n=n_tasks, seed=int(seed))
+        except (FileNotFoundError, ValueError, pd.errors.EmptyDataError) as exc:
+            st.error(f"Azure dataset could not be loaded: {exc}. Falling back to synthetic workload.")
+    return M["generate_tasks"](n=n_tasks, seed=int(seed), cloudy=cloudy)
 
 
 # ── Plotly dark theme helper ──────────────────────────────────────────────────
@@ -401,6 +412,11 @@ with st.sidebar:
                       value=0.05, step=0.01,
                       help="Pause duration between each time slot in the animation")
 
+    use_azure = st.checkbox("Use Azure Dataset", value=False)
+    azure_path = "vmtable.csv.gz"
+    if use_azure:
+        azure_path = st.text_input("Path to vmtable.csv.gz", value="vmtable.csv.gz")
+
     st.markdown("---")
     st.markdown("### 📋 Quick Info")
     st.info(
@@ -410,12 +426,23 @@ with st.sidebar:
         f"**Schedulers:** 5 algorithms"
     )
 
+    st.caption(
+        "Workload source: Azure vmtable (real traces)"
+        if use_azure else
+        "Workload source: Synthetic (simulated)"
+    )
     st.markdown("---")
     run_bench_btn = st.button("📊 Run Benchmark", key="sidebar_bench")
     live_sim_btn  = st.button("▶ Start Live Simulation", key="sidebar_live")
 
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
+st.info(
+    "Workload source: Azure vmtable (real traces)"
+    if use_azure else
+    "Workload source: Synthetic (simulated)"
+)
+
 tab_live, tab_bench, tab_battery = st.tabs([
     "⚡ Live Simulation",
     "📊 Benchmark",
@@ -438,7 +465,13 @@ with tab_live:
     if live_sim_btn or st.button("▶ Start Live Simulation", key="tab_live_btn"):
 
         # ── Setup ──────────────────────────────────────────────────────────
-        tasks_raw = M["generate_tasks"](n=n_tasks, seed=int(seed), cloudy=cloudy)
+        tasks_raw = _load_tasks_for_dashboard(
+            use_azure=use_azure,
+            azure_path=azure_path,
+            n_tasks=n_tasks,
+            seed=int(seed),
+            cloudy=cloudy,
+        )
         servers   = M["make_cluster"](5)
         for s in servers:
             s.reset()
@@ -693,7 +726,13 @@ with tab_bench:
 
     if run_bench_btn or st.button("🚀 Run All Schedulers", key="bench_run"):
         with st.spinner("Running benchmark — this may take a few seconds…"):
-            tasks_raw = M["generate_tasks"](n=n_tasks, seed=int(seed), cloudy=cloudy)
+            tasks_raw = _load_tasks_for_dashboard(
+                use_azure=use_azure,
+                azure_path=azure_path,
+                n_tasks=n_tasks,
+                seed=int(seed),
+                cloudy=cloudy,
+            )
             servers   = M["make_cluster"](5)
 
             def _reset(t):
@@ -915,7 +954,13 @@ with tab_battery:
 
     if st.button("🔋 Run Battery Analysis", key="battery_run"):
         with st.spinner("Running DP vs Battery-Aware DP comparison…"):
-            tasks_raw = M["generate_tasks"](n=n_tasks, seed=int(seed), cloudy=cloudy)
+            tasks_raw = _load_tasks_for_dashboard(
+                use_azure=use_azure,
+                azure_path=azure_path,
+                n_tasks=n_tasks,
+                seed=int(seed),
+                cloudy=cloudy,
+            )
             servers   = M["make_cluster"](5)
 
             def _reset(t):
