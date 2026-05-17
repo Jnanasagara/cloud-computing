@@ -1,0 +1,46 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Large data files ──────────────────────────────────────────────────────────
+# Azure VM trace — 437 MB, exceeds GitHub's 100 MB limit
+vmtable.csv.gz
+*.csv.gz
+*.parquet
+
+# ── Generated outputs ─────────────────────────────────────────────────────────
+outputs/
+*.png
+*.pdf
+
+# ── Streamlit ─────────────────────────────────────────────────────────────────
+.streamlit/secrets.toml
+
+# ── IDE / Editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Jupyter (if ever used) ────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb

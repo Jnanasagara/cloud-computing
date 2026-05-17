@@ -19,169 +19,273 @@ import numpy as np
 
 # ── Page config (MUST be first Streamlit call) ────────────────────────────────
 st.set_page_config(
+    page_title="Green Cloud Scheduler",
+    page_icon="🌱",
     layout="wide",
-    page_title="Carbon-Aware Cloud Scheduler",
-    page_icon="⚡",
+    initial_sidebar_state="expanded",
 )
 
-# ── Dark theme CSS injection ──────────────────────────────────────────────────
+# ── Session state routing ─────────────────────────────────────────────────────
+if "show_dashboard" not in st.session_state:
+    st.session_state.show_dashboard = False
+
+if not st.session_state.show_dashboard:
+    # Hide Streamlit chrome on landing page
+    st.markdown("""
+<style>
+header[data-testid="stHeader"] { display: none; }
+footer { display: none; }
+.block-container { padding-top: 0 !important; padding-bottom: 0 !important;
+                   max-width: 100% !important; padding-left: 0 !important;
+                   padding-right: 0 !important; }
+[data-testid="stAppViewContainer"] { background: #0d1117; }
+div.stButton > button {
+    background-color: #21262d; color: #cdd9e5;
+    border: 1px solid #30363d; border-radius: 6px;
+    padding: 0.55rem 1.4rem; font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease;
+    width: 100%;
+}
+div.stButton > button:hover {
+    border-color: #2ea043; color: #2ea043; background-color: #21262d;
+}
+</style>
+""", unsafe_allow_html=True)
+
+    import streamlit.components.v1 as _stc_lp
+    _stc_lp.html("""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:680px;background:#0d1117;overflow:hidden}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.ov{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    text-align:center;max-width:680px;width:90%;pointer-events:none;user-select:none}
+.lp-sm{font-size:10px;letter-spacing:3px;color:#2ea043;
+        font-family:system-ui,-apple-system,sans-serif;font-weight:500;margin-bottom:16px}
+.lp-h1{font-size:36px;font-weight:600;color:#cdd9e5;
+        font-family:system-ui,-apple-system,sans-serif;line-height:1.2;margin-bottom:12px}
+.lp-sub{font-size:14px;color:#768390;line-height:1.6;max-width:520px;
+        margin:0 auto 28px auto;font-family:system-ui,-apple-system,sans-serif}
+.lp-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:48px}
+.lp-badge{background:transparent;border:1px solid #30363d;color:#768390;font-size:11px;
+          padding:4px 12px;border-radius:20px;font-family:system-ui,-apple-system,sans-serif}
+.lp-div{width:40px;height:1px;background:#30363d;margin:0 auto 32px auto}
+.lp-devlbl{font-size:10px;letter-spacing:2px;color:#4a5260;font-weight:500;
+            margin-bottom:20px;font-family:system-ui,-apple-system,sans-serif}
+.lp-devrow{display:flex;flex-direction:row;gap:12px;overflow-x:auto;padding-bottom:8px;
+           justify-content:center;max-width:600px;margin:0 auto;
+           scrollbar-width:none;pointer-events:all}
+.lp-devrow::-webkit-scrollbar{display:none}
+.lp-card{width:130px;flex-shrink:0;background:#161b22;border:1px solid #30363d;
+         border-radius:8px;padding:14px 12px;text-align:center}
+.lp-av{width:36px;height:36px;border-radius:50%;background:#21262d;
+       border:1px solid #30363d;margin:0 auto 10px auto;display:flex;
+       align-items:center;justify-content:center;font-size:13px;color:#2ea043;
+       font-weight:500;font-family:system-ui,-apple-system,sans-serif}
+.lp-dn{font-size:12px;color:#cdd9e5;font-weight:500;margin-bottom:3px;
+       font-family:system-ui,sans-serif}
+.lp-dr{font-size:10px;color:#768390;font-family:system-ui,sans-serif}
+</style></head>
+<body>
+<canvas id="lpc"></canvas>
+<div class="ov">
+  <div class="lp-sm">CLOUD COMPUTING PROJECT</div>
+  <div class="lp-h1">Carbon-Aware Cloud Scheduler</div>
+  <div class="lp-sub">Scheduling cloud workloads intelligently across renewable energy windows
+    to minimise carbon emissions without missing deadlines.</div>
+  <div class="lp-badges">
+    <span class="lp-badge">Dynamic Programming</span>
+    <span class="lp-badge">P2C Load Balancing</span>
+    <span class="lp-badge">Agentic AI</span>
+    <span class="lp-badge">Battery Aware</span>
+  </div>
+  <div class="lp-div"></div>
+  <div class="lp-devlbl">DEVELOPED BY</div>
+  <div class="lp-devrow">
+    <div class="lp-card"><div class="lp-av">D</div>
+      <div class="lp-dn">Dhimant Kulkarni</div><div class="lp-dr">Developer 1</div></div>
+    <div class="lp-card"><div class="lp-av">N</div>
+      <div class="lp-dn">Noel Tom</div><div class="lp-dr">Developer 2</div></div>
+    <div class="lp-card"><div class="lp-av">S</div>
+      <div class="lp-dn">Shravan Sathiyanarayanan</div><div class="lp-dr">Developer 3</div></div>
+    <div class="lp-card"><div class="lp-av">J</div>
+      <div class="lp-dn">Jnanasagara Srinivasa</div><div class="lp-dr">Developer 4</div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var c=document.getElementById('lpc'),ctx=c.getContext('2d');
+  var DS=3,GAP=20,RAD=100,BC=[28,33,40],AC=[46,160,67];
+  var ripples=[],mouse={x:-9999,y:-9999};
+  function resize(){c.width=c.offsetWidth||window.innerWidth;c.height=c.offsetHeight||680;}
+  resize();window.addEventListener('resize',resize);
+  window.addEventListener('mousemove',function(e){
+    var r=c.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
+  window.addEventListener('click',function(e){
+    var r=c.getBoundingClientRect();
+    ripples.push({x:e.clientX-r.left,y:e.clientY-r.top,t:0,max:60});});
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function draw(){
+    ctx.fillStyle='#0d1117';ctx.fillRect(0,0,c.width,c.height);
+    var step=DS+GAP;
+    for(var rx=DS;rx<c.width;rx+=step){
+      for(var ry=DS;ry<c.height;ry+=step){
+        var dx=rx-mouse.x,dy=ry-mouse.y;
+        var dist=Math.sqrt(dx*dx+dy*dy);
+        var mf=Math.max(0,1-dist/RAD),rf=0;
+        for(var i=0;i<ripples.length;i++){
+          var rp=ripples[i];
+          var rdx=rx-rp.x,rdy=ry-rp.y;
+          var rd=Math.sqrt(rdx*rdx+rdy*rdy);
+          var wr=rp.t*10,ww=55,wd=Math.abs(rd-wr);
+          if(wd<ww){var wf=(1-wd/ww)*(1-rp.t/rp.max);rf=Math.max(rf,wf);}
+        }
+        var t=Math.min(1,mf+rf);
+        var r=Math.round(lerp(BC[0],AC[0],t));
+        var g=Math.round(lerp(BC[1],AC[1],t));
+        var b=Math.round(lerp(BC[2],AC[2],t));
+        ctx.fillStyle='rgb('+r+','+g+','+b+')';
+        ctx.beginPath();ctx.arc(rx,ry,DS/2,0,Math.PI*2);ctx.fill();
+      }
+    }
+    ripples=ripples.filter(function(rp){rp.t++;return rp.t<rp.max;});
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body></html>""", height=680, scrolling=False)
+
+    col1, col2, col3 = st.columns([2, 1, 2])
+    with col2:
+        if st.button("Enter Dashboard", use_container_width=True):
+            st.session_state.show_dashboard = True
+            st.rerun()
+
+    st.stop()
+
+# ── Theme CSS injection ────────────────────────────────────────────────────────
 st.markdown("""
 <style>
 /* ── Base ── */
 html, body, [class*="css"] {
     background-color: #0d1117 !important;
-    color: #c9d1d9 !important;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #cdd9e5 !important;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0d1117; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #444d56; }
 
 /* ── Main content area ── */
 .main .block-container {
     background-color: #0d1117;
-    padding-top: 1.5rem;
+    padding-top: 1rem;
     padding-bottom: 2rem;
     max-width: 1400px;
 }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background-color: #010409 !important;
-    border-right: 1px solid #21262d;
+    background-color: #161b22 !important;
+    border-right: 1px solid #30363d;
 }
-[data-testid="stSidebar"] .block-container {
-    background-color: #010409;
-}
+[data-testid="stSidebar"] .block-container { background-color: #161b22; }
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span {
-    color: #8b949e !important;
-}
+[data-testid="stSidebar"] span { color: #768390 !important; }
 
-/* ── Cards / metric containers ── */
+/* ── Metric cards ── */
 div[data-testid="metric-container"] {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    padding: 1rem 1.2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    background-color: #161b22; border: 1px solid #30363d;
+    border-radius: 6px; padding: 1rem 1.2rem;
 }
 div[data-testid="metric-container"] label {
-    color: #8b949e !important;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    color: #768390 !important; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
 }
 div[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #3fb950 !important;
-    font-size: 1.9rem !important;
-    font-weight: 700;
+    color: #2ea043 !important; font-size: 1.75rem !important; font-weight: 600;
 }
 div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
-    color: #58a6ff !important;
+    color: #768390 !important; font-size: 0.8rem;
 }
 
 /* ── Buttons ── */
 div.stButton > button {
-    background: linear-gradient(135deg, #238636, #2ea043);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.55rem 1.4rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    width: 100%;
+    background-color: #21262d; color: #cdd9e5;
+    border: 1px solid #30363d; border-radius: 6px;
+    padding: 0.5rem 1.2rem; font-size: 0.9rem; font-weight: 500;
+    cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; width: 100%;
 }
 div.stButton > button:hover {
-    background: linear-gradient(135deg, #2ea043, #3fb950);
-    box-shadow: 0 0 12px rgba(63,185,80,0.4);
-    transform: translateY(-1px);
+    border-color: #2ea043; color: #2ea043; background-color: #21262d;
 }
 
 /* ── Tabs ── */
 button[data-baseweb="tab"] {
-    background-color: transparent !important;
-    color: #8b949e !important;
-    border-bottom: 2px solid transparent;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 0.6rem 1.2rem;
-    transition: color 0.2s;
+    background-color: transparent !important; color: #768390 !important;
+    border-bottom: 2px solid transparent; font-size: 0.9rem; font-weight: 500;
+    padding: 0.55rem 1.1rem; transition: color 0.15s;
 }
 button[data-baseweb="tab"][aria-selected="true"] {
-    color: #58a6ff !important;
-    border-bottom: 2px solid #58a6ff !important;
+    color: #cdd9e5 !important; border-bottom: 2px solid #2ea043 !important;
 }
-[data-baseweb="tab-list"] {
-    border-bottom: 1px solid #21262d;
-    margin-bottom: 1.2rem;
+[data-baseweb="tab-list"] { border-bottom: 1px solid #30363d; margin-bottom: 1.2rem; }
+
+/* ── Input fields ── */
+input, textarea, select,
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input {
+    background-color: #161b22 !important; border: 1px solid #30363d !important;
+    color: #cdd9e5 !important; border-radius: 6px !important;
 }
 
 /* ── Sliders ── */
-[data-testid="stSlider"] .st-bo { background-color: #21262d; }
-[data-testid="stSlider"] .st-bp { background-color: #3fb950; }
+[data-testid="stSlider"] .st-bo { background-color: #30363d; }
+[data-testid="stSlider"] .st-bp { background-color: #2ea043; }
 
-/* ── Toggle ── */
-[data-testid="stCheckbox"] label { color: #c9d1d9 !important; }
+/* ── Toggle / checkbox ── */
+[data-testid="stCheckbox"] label { color: #cdd9e5 !important; }
 
-/* ── Info boxes ── */
+/* ── Info / status boxes ── */
 div[data-testid="stInfo"] {
-    background-color: #0c2d48;
-    border: 1px solid #1f6feb;
-    border-radius: 8px;
-    color: #58a6ff !important;
-}
-
-/* ── Banner ── */
-.banner {
-    background: linear-gradient(135deg, #0d1117 0%, #0c2d48 50%, #0d1117 100%);
-    border: 1px solid #1f6feb;
-    border-radius: 14px;
-    padding: 1.6rem 2rem;
-    margin-bottom: 1.8rem;
-    text-align: center;
-}
-.banner h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #58a6ff;
-    margin: 0 0 0.3rem 0;
-    letter-spacing: -0.02em;
-}
-.banner p {
-    font-size: 1rem;
-    color: #8b949e;
-    margin: 0;
+    background-color: #161b22; border: 1px solid #30363d;
+    border-radius: 6px; color: #768390 !important;
 }
 
 /* ── Section headers ── */
 .section-header {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #58a6ff;
-    border-left: 3px solid #3fb950;
-    padding-left: 0.7rem;
-    margin: 1.2rem 0 0.8rem 0;
+    font-size: 1rem; font-weight: 600; color: #cdd9e5;
+    border-left: 3px solid #2ea043; padding-left: 0.7rem;
+    margin: 1.4rem 0 0.8rem 0; letter-spacing: 0.01em;
 }
 
 /* ── Progress bar ── */
-[data-testid="stProgress"] > div > div {
-    background-color: #3fb950 !important;
-}
+[data-testid="stProgress"] > div > div { background-color: #2ea043 !important; }
 
 /* ── DataFrame / tables ── */
-[data-testid="stDataFrame"] { border-radius: 8px; overflow: hidden; }
-.dataframe { background-color: #161b22 !important; color: #c9d1d9 !important; }
-.dataframe th { background-color: #21262d !important; color: #58a6ff !important; }
+[data-testid="stDataFrame"] { border-radius: 6px; overflow: hidden; }
+.dataframe { background-color: #161b22 !important; color: #cdd9e5 !important; }
+.dataframe th { background-color: #21262d !important; color: #768390 !important; font-weight: 500; }
 .dataframe td { border-color: #30363d !important; }
 
 /* ── Divider ── */
-hr { border-color: #21262d; }
+hr { border-color: #30363d; margin: 1.2rem 0; }
 
 /* ── Spinner ── */
-[data-testid="stSpinner"] { color: #3fb950; }
+[data-testid="stSpinner"] { color: #2ea043; }
+
+/* ── Sidebar branding ── */
+.sidebar-brand { padding: 0.2rem 0 0.8rem 0; }
+.sidebar-brand .sb-title { font-size: 14px; font-weight: 500; color: #2ea043; display: block; }
+.sidebar-brand .sb-sub { font-size: 11px; color: #768390; display: block; margin-top: 2px; }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ── Lazy imports (avoid import errors before requirements are installed) ──────
@@ -385,17 +489,138 @@ def make_task_scatter(placed_tasks: list, height=380):
     return fig
 
 
-# ── Banner ────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="banner">
-  <h1>🌱 Carbon-Aware Cloud Task Scheduler</h1>
-  <p>Dynamic Programming &nbsp;·&nbsp; Agentic AI &nbsp;·&nbsp; Battery Storage &nbsp;·&nbsp; Real-Time Simulation</p>
+# ── Dot-grid canvas header ────────────────────────────────────────────────────
+import streamlit.components.v1 as _stc
+_stc.html("""
+<div style="position:relative;width:100%;height:220px;overflow:hidden;
+            border-bottom:1px solid #30363d;margin-bottom:24px;background:#0d1117">
+  <canvas id="gc-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;
+                                 display:block;"></canvas>
+  <div style="position:absolute;top:0;left:0;width:100%;height:100%;
+              display:flex;flex-direction:column;align-items:center;
+              justify-content:center;pointer-events:none;user-select:none">
+    <div style="font-size:22px;font-weight:500;color:#cdd9e5;
+                font-family:system-ui,-apple-system,sans-serif;letter-spacing:-0.01em">
+      Carbon-Aware Cloud Scheduler
+    </div>
+    <div style="font-size:13px;color:#768390;margin-top:6px;
+                font-family:system-ui,-apple-system,sans-serif">
+      Scheduling cloud workloads across renewable energy windows
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <span style="background:#21262d;border:1px solid #30363d;color:#768390;
+                   font-size:11px;padding:3px 10px;border-radius:12px;
+                   font-family:system-ui,-apple-system,sans-serif">Dynamic Programming</span>
+      <span style="background:#21262d;border:1px solid #30363d;color:#768390;
+                   font-size:11px;padding:3px 10px;border-radius:12px;
+                   font-family:system-ui,-apple-system,sans-serif">P2C Load Balancing</span>
+      <span style="background:#21262d;border:1px solid #30363d;color:#768390;
+                   font-size:11px;padding:3px 10px;border-radius:12px;
+                   font-family:system-ui,-apple-system,sans-serif">Agentic AI</span>
+    </div>
+  </div>
 </div>
-""", unsafe_allow_html=True)
+<script>
+(function(){
+  var canvas = document.getElementById('gc-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var DOT_SIZE = 4;
+  var GAP = 22;
+  var RADIUS = 90;
+  var BASE_COLOR = [28, 33, 40];
+  var ACTIVE_COLOR = [46, 160, 67];
+  var ripples = [];
+  var mouse = {x: -9999, y: -9999};
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth  || 800;
+    canvas.height = canvas.offsetHeight || 220;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  canvas.addEventListener('mousemove', function(e) {
+    var r = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - r.left;
+    mouse.y = e.clientY - r.top;
+  });
+  canvas.addEventListener('mouseleave', function() {
+    mouse.x = -9999; mouse.y = -9999;
+  });
+  canvas.addEventListener('click', function(e) {
+    var r = canvas.getBoundingClientRect();
+    ripples.push({x: e.clientX - r.left, y: e.clientY - r.top,
+                  t: 0, maxT: 55});
+  });
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 2); }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var step = DOT_SIZE + GAP;
+    var now = Date.now();
+
+    for (var rx = DOT_SIZE; rx < canvas.width; rx += step) {
+      for (var ry = DOT_SIZE; ry < canvas.height; ry += step) {
+        // Mouse proximity factor
+        var dx = rx - mouse.x;
+        var dy = ry - mouse.y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        var mouseFactor = Math.max(0, 1 - dist / RADIUS);
+
+        // Ripple factor (take max of all active ripples)
+        var rippleFactor = 0;
+        for (var i = 0; i < ripples.length; i++) {
+          var rp = ripples[i];
+          var rdx = rx - rp.x;
+          var rdy = ry - rp.y;
+          var rdist = Math.sqrt(rdx*rdx + rdy*rdy);
+          var waveRadius = rp.t * 9;
+          var waveWidth  = 50;
+          var waveDist = Math.abs(rdist - waveRadius);
+          if (waveDist < waveWidth) {
+            var waveFactor = (1 - waveDist / waveWidth) * (1 - rp.t / rp.maxT);
+            rippleFactor = Math.max(rippleFactor, waveFactor);
+          }
+        }
+
+        var t = Math.min(1, mouseFactor + rippleFactor);
+        var r = Math.round(lerp(BASE_COLOR[0], ACTIVE_COLOR[0], t));
+        var g = Math.round(lerp(BASE_COLOR[1], ACTIVE_COLOR[1], t));
+        var b = Math.round(lerp(BASE_COLOR[2], ACTIVE_COLOR[2], t));
+
+        ctx.fillStyle = 'rgb('+r+','+g+','+b+')';
+        ctx.beginPath();
+        ctx.arc(rx, ry, DOT_SIZE / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Advance + prune ripples
+    ripples = ripples.filter(function(rp) {
+      rp.t++;
+      return rp.t < rp.maxT;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+""", height=228, scrolling=False)
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
+    st.markdown("""
+<div class="sidebar-brand">
+  <span class="sb-title">Green Cloud Scheduler</span>
+  <span class="sb-sub">Carbon-Aware Task Scheduling</span>
+</div>
+""", unsafe_allow_html=True)
+    st.divider()
     st.markdown("## ⚙ Simulation Controls")
     st.markdown("---")
 
@@ -507,6 +732,7 @@ with tab_live:
         solar_placeholder = _col_left.empty()
         tasks_placeholder = _col_right.empty()
         server_placeholder = st.empty()
+        chart_update_interval = 4
 
         energy_profile = [energy_at_slot(s, cloudy) for s in range(SLOTS_PER_DAY)]
         times_labels   = [slot_to_time(s) for s in range(SLOTS_PER_DAY)]
@@ -627,21 +853,38 @@ with tab_live:
                     st.metric("Battery Level", f"{battery.soc_pct():.0f}%",
                               delta=f"{battery.soc:.0f}/{battery.capacity:.0f} units")
 
-            # Main charts — write into pre-created placeholders to avoid flicker
-            fig_solar = make_solar_fig(
-                cloudy=cloudy,
-                current_slot=slot,
-                battery_trace=battery_soc,
-                height=360,
+            # Refresh heavy charts every few slots to reduce flicker in Streamlit.
+            should_refresh_charts = (
+                slot == 0
+                or (slot + 1) % chart_update_interval == 0
+                or slot == SLOTS_PER_DAY - 1
             )
-            solar_placeholder.plotly_chart(fig_solar, use_container_width=True, key=f"solar_{slot}")
+            if should_refresh_charts:
+                fig_solar = make_solar_fig(
+                    cloudy=cloudy,
+                    current_slot=slot,
+                    battery_trace=battery_soc,
+                    height=360,
+                )
+                solar_placeholder.plotly_chart(
+                    fig_solar,
+                    width="stretch",
+                    key=f"live_solar_chart_{slot}",
+                )
 
-            fig_tasks = make_task_scatter(placed_tasks, height=360)
-            tasks_placeholder.plotly_chart(fig_tasks, use_container_width=True, key=f"tasks_{slot}")
+                fig_tasks = make_task_scatter(placed_tasks, height=360)
+                tasks_placeholder.plotly_chart(
+                    fig_tasks,
+                    width="stretch",
+                    key=f"live_tasks_chart_{slot}",
+                )
 
-            # Server bars
-            fig_srv = make_server_bar(servers)
-            server_placeholder.plotly_chart(fig_srv, use_container_width=True, key=f"srv_{slot}")
+                fig_srv = make_server_bar(servers)
+                server_placeholder.plotly_chart(
+                    fig_srv,
+                    width="stretch",
+                    key=f"live_server_chart_{slot}",
+                )
 
             time.sleep(speed)
 
@@ -702,7 +945,7 @@ with tab_live:
             height=320,
             **DARK_LAYOUT,
         )
-        st.plotly_chart(fig_pie, use_container_width=True)
+        st.plotly_chart(fig_pie, width="stretch")
 
     else:
         st.info("👈 Configure settings in the sidebar, then click **▶ Start Live Simulation** to begin.")
@@ -710,7 +953,7 @@ with tab_live:
         # Static preview of solar curve
         st.markdown('<div class="section-header">Solar Energy Preview</div>', unsafe_allow_html=True)
         fig_preview = make_solar_fig(cloudy=cloudy, height=400)
-        st.plotly_chart(fig_preview, use_container_width=True)
+        st.plotly_chart(fig_preview, width="stretch")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -803,7 +1046,7 @@ with tab_bench:
             fig1.update_xaxes(tickangle=-45, tickvals=times[::8], **_AXIS_STYLE)
             fig1.update_yaxes(title_text="Solar Energy (units)", secondary_y=False)
             fig1.update_yaxes(title_text="Carbon Intensity (gCO₂/unit)", secondary_y=True)
-            st.plotly_chart(fig1, use_container_width=True)
+            st.plotly_chart(fig1, width="stretch")
 
         with col2:
             # Chart 2: Carbon comparison bar
@@ -825,7 +1068,7 @@ with tab_bench:
             )
             fig2.update_yaxes(title="gCO₂", range=[0, max(carbons) * 1.3], **_AXIS_STYLE)
             fig2.update_xaxes(tickangle=-15, **_AXIS_STYLE)
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, width="stretch")
 
         # ── Row 2: Task distribution + Latency scatter ─────────────────────
         col3, col4 = st.columns(2)
@@ -853,7 +1096,7 @@ with tab_bench:
                 height=380,
                 **DARK_LAYOUT,
             )
-            st.plotly_chart(fig3, use_container_width=True)
+            st.plotly_chart(fig3, width="stretch")
 
         with col4:
             # Chart 4: Latency vs Carbon scatter
@@ -878,7 +1121,7 @@ with tab_bench:
                 height=380,
                 **DARK_LAYOUT,
             )
-            st.plotly_chart(fig4, use_container_width=True)
+            st.plotly_chart(fig4, width="stretch")
 
         # ── Summary table ──────────────────────────────────────────────────
         st.markdown("---")
@@ -908,7 +1151,7 @@ with tab_bench:
         ).background_gradient(
             subset=["Carbon Saving (%)"],
             cmap="Greens",
-        ), use_container_width=True)
+        ), width="stretch")
 
         # ── Carbon savings highlight ───────────────────────────────────────
         if len(results) > 1:
@@ -937,7 +1180,7 @@ with tab_bench:
         fig_prev.update_layout(title="Solar Energy Profile (preview)", height=350, **DARK_LAYOUT)
         fig_prev.update_xaxes(tickangle=-45, tickvals=times[::8], **_AXIS_STYLE)
         fig_prev.update_yaxes(**_AXIS_STYLE)
-        st.plotly_chart(fig_prev, use_container_width=True)
+        st.plotly_chart(fig_prev, width="stretch")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -1033,7 +1276,7 @@ with tab_battery:
         )
         fig_batt.update_yaxes(title_text="Solar Energy (units)", secondary_y=False)
         fig_batt.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True)
-        st.plotly_chart(fig_batt, use_container_width=True)
+        st.plotly_chart(fig_batt, width="stretch")
 
         # ── Chart 2: Battery charge/discharge events ───────────────────────
         st.markdown('<div class="section-header">Battery Charge / Discharge Events</div>',
@@ -1070,7 +1313,7 @@ with tab_battery:
                 height=380,
                 **DARK_LAYOUT,
             )
-            st.plotly_chart(fig_events, use_container_width=True)
+            st.plotly_chart(fig_events, width="stretch")
         else:
             st.info("No battery events recorded. Try increasing the task load or changing parameters.")
 
@@ -1101,7 +1344,7 @@ with tab_battery:
             height=380,
             **DARK_LAYOUT,
         )
-        st.plotly_chart(fig_comp, use_container_width=True)
+        st.plotly_chart(fig_comp, width="stretch")
 
         # ── Battery summary table ──────────────────────────────────────────
         st.markdown('<div class="section-header">Battery Performance Summary</div>',
@@ -1120,7 +1363,7 @@ with tab_battery:
                 str(batt_sum.get('discharge_events', 0)),
             ],
         }
-        st.dataframe(pd.DataFrame(batt_data).set_index("Metric"), use_container_width=True)
+        st.dataframe(pd.DataFrame(batt_data).set_index("Metric"), width="stretch")
 
     else:
         st.info("Click **Run Battery Analysis** to compare standard DP vs Battery-Aware DP.")
@@ -1197,16 +1440,14 @@ with tab_battery:
         )
         fig_ill.update_yaxes(title_text="Solar Energy (units)", secondary_y=False)
         fig_ill.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True)
-        st.plotly_chart(fig_ill, use_container_width=True)
+        st.plotly_chart(fig_ill, width="stretch")
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────
-st.markdown("---")
-st.markdown(
-    "<div style='text-align:center; color:#484f58; font-size:0.8rem;'>"
-    "Carbon-Aware Cloud Task Scheduler &nbsp;·&nbsp; "
-    "Dynamic Programming + Agentic AI + Battery Storage &nbsp;·&nbsp; "
-    "Cloud Computing Project 2024"
-    "</div>",
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<div style="margin-top:48px;padding-top:16px;border-top:1px solid #30363d;
+            text-align:center;color:#4a5260;font-size:11px">
+    Green Cloud Scheduler &nbsp;·&nbsp; Carbon-Aware Task Scheduling
+    &nbsp;·&nbsp; Cloud Computing Project
+</div>
+""", unsafe_allow_html=True)
