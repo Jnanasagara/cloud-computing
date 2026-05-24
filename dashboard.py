@@ -317,6 +317,44 @@ html, body, [class*="css"] {{
     font-size: 0.85rem;
 }}
 
+/* Sidebar collapse/expand control */
+[data-testid="stExpandSidebarButton"],
+[data-testid="stSidebar"] button[kind="header"],
+[data-testid="stSidebar"] button[kind="headerNoPadding"],
+[data-testid="stSidebar"] button[aria-label*="sidebar" i] {{
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    overflow: hidden !important;
+}}
+[data-testid="stExpandSidebarButton"] *,
+[data-testid="stSidebar"] button[kind="header"] *,
+[data-testid="stSidebar"] button[kind="headerNoPadding"] *,
+[data-testid="stSidebar"] button[aria-label*="sidebar" i] * {{
+    opacity: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+}}
+[data-testid="stExpandSidebarButton"]::before,
+[data-testid="stSidebar"] button[kind="header"]::before,
+[data-testid="stSidebar"] button[kind="headerNoPadding"]::before,
+[data-testid="stSidebar"] button[aria-label*="sidebar" i]::before {{
+    content: "";
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: {sb_label};
+    box-shadow: 0 -6px 0 {sb_label}, 0 6px 0 {sb_label};
+    display: block;
+    flex: 0 0 auto;
+}}
+
 /* ── Metric cards ── */
 div[data-testid="metric-container"] {{
     background: {metric_bg} !important;
@@ -786,6 +824,9 @@ _stc.html("""
       <span style="background:#21262d;border:1px solid #30363d;color:#768390;
                    font-size:11px;padding:3px 10px;border-radius:12px;
                    font-family:system-ui,-apple-system,sans-serif">Agentic AI</span>
+      <span style="background:#21262d;border:1px solid #30363d;color:#768390;
+                   font-size:11px;padding:3px 10px;border-radius:12px;
+                   font-family:system-ui,-apple-system,sans-serif">Battery Aware</span>    
     </div>
   </div>
 </div>
@@ -891,6 +932,10 @@ with st.sidebar:
 """, unsafe_allow_html=True)
 
     # ── Light / Dark mode toggle ───────────────────────────────────────────
+    if st.button("HOME PAGE", key="sidebar_home", use_container_width=True):
+        st.session_state.show_dashboard = False
+        st.rerun()
+
     light_mode = st.toggle(
         "Light Mode",
         key="theme_toggle",
