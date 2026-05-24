@@ -24,6 +24,8 @@ from phase2_energy_model import (
     slot_to_time,
     carbon_array,
     energy_array,
+    activate_solar_day,
+    deactivate_solar_dataset,
 )
 from phase3_tasks import (
     ScheduleResult,
@@ -140,7 +142,11 @@ def chart_energy_profile(cloudy: bool = False, save: bool = True) -> str:
     ax1.set_xticks(tick_slots)
     ax1.set_xticklabels([slot_to_time(slot) for slot in tick_slots], rotation=45, ha="right")
 
-    title = f"Solar Energy Profile {'(Cloudy)' if cloudy else '(Clear Day)'}"
+    import phase2_energy_model
+    if phase2_energy_model._USE_DATASET:
+        title = "Solar Energy Profile (Real-world Dataset)"
+    else:
+        title = f"Solar Energy Profile {'(Cloudy)' if cloudy else '(Clear Day)'}"
     ax1.set_title(title, fontsize=14, pad=12)
 
     lines1, labels1 = ax1.get_legend_handles_labels()
@@ -316,11 +322,23 @@ def run_benchmark(
     cloudy: bool = False,
     use_azure: bool = False,
     azure_filepath: str = "vmtable.csv",
+    solar_dataset: str = None,
+    solar_date: str = "2016-09-29",
 ):
+    if solar_dataset:
+        print(f"Activating real solar dataset from {solar_dataset} for date {solar_date}...")
+        activated = activate_solar_day(solar_date, solar_dataset)
+        if not activated:
+            print("[WARN] Could not activate solar dataset. Falling back to synthetic profile.")
+    else:
+        deactivate_solar_dataset()
+
     print(f"\n{'=' * 60}")
     print("  Carbon-Aware Cloud Scheduler Benchmark")
+    import phase2_energy_model
+    solar_source = f"Real-world Dataset ({solar_date})" if phase2_energy_model._USE_DATASET else ("Cloudy" if cloudy else "Clear Day")
     print(
-        f"  Tasks={n_tasks}, Seed={seed}, Cloudy={cloudy}, "
+        f"  Tasks={n_tasks}, Seed={seed}, Solar={solar_source}, "
         f"Source={'Azure vmtable' if use_azure else 'Synthetic'}"
     )
     if use_azure:
@@ -361,6 +379,16 @@ def _parse_args():
         default="vmtable.csv",
         help="Path to the Azure vmtable CSV file. Defaults to ./vmtable.csv.",
     )
+    parser.add_argument(
+        "--solar-dataset",
+        default=None,
+        help="Path to real-world solar dataset CSV (e.g. SolarPrediction.csv).",
+    )
+    parser.add_argument(
+        "--solar-date",
+        default="2016-09-29",
+        help="Date string to use from the solar dataset (format: YYYY-MM-DD).",
+    )
     return parser.parse_args()
 
 
@@ -372,4 +400,6 @@ if __name__ == "__main__":
         cloudy=args.cloudy,
         use_azure=args.azure,
         azure_filepath=args.azure_path,
+        solar_dataset=args.solar_dataset,
+        solar_date=args.solar_date,
     )

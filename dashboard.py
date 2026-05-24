@@ -164,127 +164,395 @@ canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
 
     st.stop()
 
-# ── Theme CSS injection ────────────────────────────────────────────────────────
-st.markdown("""
+# ── Theme helpers (dark / light mode) ─────────────────────────────────────────
+
+def _inject_theme(light_mode: bool = False):
+    """Inject full CSS for the active colour palette."""
+    if light_mode:
+        # ── Light palette ──────────────────────────────────────────────────
+        bg_page            = "#f0f4f8"
+        bg_sidebar         = "#ffffff"
+        metric_bg          = "rgba(255,255,255,0.88)"
+        metric_border      = "rgba(0,0,0,0.07)"
+        metric_shadow      = "0 8px 32px 0 rgba(0,0,0,0.06)"
+        metric_hover_bdr   = "rgba(5,150,105,0.35)"
+        metric_hover_shd   = "0 12px 40px rgba(5,150,105,0.10)"
+        metric_value       = "#059669"
+        metric_label       = "#475569"
+        metric_delta       = "#64748b"
+        text_primary       = "#0f172a"
+        text_muted         = "#475569"
+        border             = "rgba(0,0,0,0.08)"
+        accent             = "#059669"
+        accent2            = "#2563eb"
+        btn_bg             = "linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)"
+        btn_hover_bg       = "linear-gradient(135deg,#f0fdf4 0%,#f8fafc 100%)"
+        btn_color          = "#0f172a"
+        btn_border         = "rgba(0,0,0,0.10)"
+        tab_inactive       = "#64748b"
+        tab_hover          = "#0f172a"
+        tab_border_btm     = "rgba(0,0,0,0.08)"
+        scrollbar_track    = "#f0f4f8"
+        scrollbar_thumb    = "#cbd5e1"
+        scrollbar_thumb_hv = "#94a3b8"
+        alert_bg           = "rgba(255,255,255,0.65)"
+        alert_border       = "rgba(0,0,0,0.08)"
+        alert_color        = "#475569"
+        alert_div          = "#0f172a"
+        input_bg           = "#ffffff"
+        input_border       = "rgba(0,0,0,0.10)"
+        input_color        = "#0f172a"
+        slider_track       = "#e2e8f0"
+        slider_fill        = "#059669"
+        hr_color           = "rgba(0,0,0,0.08)"
+        sb_title           = "#059669"
+        sb_sub             = "#94a3b8"
+        sb_label           = "#475569"
+        badge_bg           = "#f8fafc"
+        badge_border       = "rgba(0,0,0,0.08)"
+        badge_blue         = "#2563eb"
+        sc_bg              = "rgba(255,255,255,0.70)"
+        sc_border          = "rgba(0,0,0,0.06)"
+        df_bg              = "#ffffff"
+        df_th_bg           = "#f8fafc"
+        df_th_color        = "#475569"
+        df_td_border       = "#f1f5f9"
+        chart_glass_bg     = "rgba(255,255,255,0.80)"
+        chart_glass_bdr    = "rgba(0,0,0,0.08)"
+        chart_glass_shd    = "0 4px 28px rgba(0,0,0,0.07)"
+        check_label        = "#0f172a"
+    else:
+        # ── Dark palette ───────────────────────────────────────────────────
+        bg_page            = "#07090e"
+        bg_sidebar         = "#0b0f19"
+        metric_bg          = "rgba(13,18,30,0.72)"
+        metric_border      = "rgba(255,255,255,0.05)"
+        metric_shadow      = "0 8px 32px 0 rgba(0,0,0,0.30)"
+        metric_hover_bdr   = "rgba(16,185,129,0.40)"
+        metric_hover_shd   = "0 12px 40px rgba(16,185,129,0.10)"
+        metric_value       = "#10b981"
+        metric_label       = "#94a3b8"
+        metric_delta       = "#64748b"
+        text_primary       = "#f1f5f9"
+        text_muted         = "#94a3b8"
+        border             = "rgba(255,255,255,0.07)"
+        accent             = "#10b981"
+        accent2            = "#3b82f6"
+        btn_bg             = "linear-gradient(135deg,#101625 0%,#0b0f19 100%)"
+        btn_hover_bg       = "linear-gradient(135deg,#0b0f19 0%,#101625 100%)"
+        btn_color          = "#e2e8f0"
+        btn_border         = "rgba(255,255,255,0.06)"
+        tab_inactive       = "#64748b"
+        tab_hover          = "#cbd5e1"
+        tab_border_btm     = "rgba(255,255,255,0.05)"
+        scrollbar_track    = "#07090e"
+        scrollbar_thumb    = "#1e293b"
+        scrollbar_thumb_hv = "#334155"
+        alert_bg           = "rgba(15,23,42,0.45)"
+        alert_border       = "rgba(255,255,255,0.05)"
+        alert_color        = "#94a3b8"
+        alert_div          = "#cbd5e1"
+        input_bg           = "#0b0f19"
+        input_border       = "rgba(255,255,255,0.05)"
+        input_color        = "#f1f5f9"
+        slider_track       = "#1e293b"
+        slider_fill        = "#10b981"
+        hr_color           = "rgba(255,255,255,0.05)"
+        sb_title           = "#10b981"
+        sb_sub             = "#64748b"
+        sb_label           = "#94a3b8"
+        badge_bg           = "#0b0f19"
+        badge_border       = "rgba(255,255,255,0.05)"
+        badge_blue         = "#3b82f6"
+        sc_bg              = "rgba(13,18,30,0.50)"
+        sc_border          = "rgba(255,255,255,0.04)"
+        df_bg              = "#0b0f19"
+        df_th_bg           = "#101625"
+        df_th_color        = "#94a3b8"
+        df_td_border       = "#101625"
+        chart_glass_bg     = "rgba(13,18,30,0.58)"
+        chart_glass_bdr    = "rgba(255,255,255,0.07)"
+        chart_glass_shd    = "0 4px 24px rgba(0,0,0,0.22)"
+        check_label        = "#f1f5f9"
+
+    st.markdown(f"""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
 /* ── Base ── */
-html, body, [class*="css"] {
-    background-color: #0d1117 !important;
-    color: #cdd9e5 !important;
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-}
+html, body, [class*="css"] {{
+    background-color: {bg_page} !important;
+    color: {text_primary} !important;
+    font-family: 'Outfit', -apple-system, sans-serif;
+}}
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #0d1117; }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #444d56; }
+::-webkit-scrollbar {{ width: 6px; height: 6px; }}
+::-webkit-scrollbar-track {{ background: {scrollbar_track}; }}
+::-webkit-scrollbar-thumb {{ background: {scrollbar_thumb}; border-radius: 4px; }}
+::-webkit-scrollbar-thumb:hover {{ background: {scrollbar_thumb_hv}; }}
 
 /* ── Main content area ── */
-.main .block-container {
-    background-color: #0d1117;
-    padding-top: 1rem;
-    padding-bottom: 2rem;
-    max-width: 1400px;
-}
+.main .block-container {{
+    background-color: {bg_page};
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    max-width: 1440px;
+}}
 
 /* ── Sidebar ── */
-[data-testid="stSidebar"] {
-    background-color: #161b22 !important;
-    border-right: 1px solid #30363d;
-}
-[data-testid="stSidebar"] .block-container { background-color: #161b22; }
+[data-testid="stSidebar"] {{
+    background-color: {bg_sidebar} !important;
+    border-right: 1px solid {border};
+}}
+[data-testid="stSidebar"] .block-container {{
+    background-color: {bg_sidebar};
+    padding-top: 2rem;
+}}
 [data-testid="stSidebar"] label,
 [data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span { color: #768390 !important; }
+[data-testid="stSidebar"] span {{
+    color: {sb_label} !important;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+}}
 
 /* ── Metric cards ── */
-div[data-testid="metric-container"] {
-    background-color: #161b22; border: 1px solid #30363d;
-    border-radius: 6px; padding: 1rem 1.2rem;
-}
-div[data-testid="metric-container"] label {
-    color: #768390 !important; font-size: 0.75rem;
-    text-transform: uppercase; letter-spacing: 0.08em;
-}
-div[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #2ea043 !important; font-size: 1.75rem !important; font-weight: 600;
-}
-div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
-    color: #768390 !important; font-size: 0.8rem;
-}
+div[data-testid="metric-container"] {{
+    background: {metric_bg} !important;
+    border: 1px solid {metric_border} !important;
+    border-radius: 14px !important;
+    padding: 1.3rem 1.5rem !important;
+    box-shadow: {metric_shadow} !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}}
+div[data-testid="metric-container"]:hover {{
+    border-color: {metric_hover_bdr} !important;
+    box-shadow: {metric_hover_shd} !important;
+    transform: translateY(-2px);
+}}
+div[data-testid="metric-container"] label {{
+    font-family: 'Space Grotesk', sans-serif;
+    color: {metric_label} !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}}
+div[data-testid="metric-container"] [data-testid="stMetricValue"] {{
+    color: {metric_value} !important;
+    font-size: 1.9rem !important;
+    font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    margin-top: 0.35rem;
+}}
+div[data-testid="metric-container"] [data-testid="stMetricDelta"] {{
+    color: {metric_delta} !important;
+    font-size: 0.85rem;
+    font-weight: 500;
+}}
 
 /* ── Buttons ── */
-div.stButton > button {
-    background-color: #21262d; color: #cdd9e5;
-    border: 1px solid #30363d; border-radius: 6px;
-    padding: 0.5rem 1.2rem; font-size: 0.9rem; font-weight: 500;
-    cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; width: 100%;
-}
-div.stButton > button:hover {
-    border-color: #2ea043; color: #2ea043; background-color: #21262d;
-}
+div.stButton > button {{
+    background: {btn_bg} !important;
+    color: {btn_color} !important;
+    border: 1px solid {btn_border} !important;
+    border-radius: 8px !important;
+    padding: 0.65rem 1.4rem !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}}
+div.stButton > button:hover {{
+    border-color: {accent} !important;
+    color: {accent} !important;
+    background: {btn_hover_bg} !important;
+    box-shadow: 0 4px 20px rgba(5,150,105,0.18) !important;
+    transform: translateY(-1px);
+}}
 
 /* ── Tabs ── */
-button[data-baseweb="tab"] {
-    background-color: transparent !important; color: #768390 !important;
-    border-bottom: 2px solid transparent; font-size: 0.9rem; font-weight: 500;
-    padding: 0.55rem 1.1rem; transition: color 0.15s;
-}
-button[data-baseweb="tab"][aria-selected="true"] {
-    color: #cdd9e5 !important; border-bottom: 2px solid #2ea043 !important;
-}
-[data-baseweb="tab-list"] { border-bottom: 1px solid #30363d; margin-bottom: 1.2rem; }
+button[data-baseweb="tab"] {{
+    background-color: transparent !important;
+    color: {tab_inactive} !important;
+    font-family: 'Space Grotesk', sans-serif;
+    border-bottom: 2px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
+    letter-spacing: 0.04em;
+    transition: all 0.2s ease-in-out;
+}}
+button[data-baseweb="tab"]:hover {{ color: {tab_hover} !important; }}
+button[data-baseweb="tab"][aria-selected="true"] {{
+    color: {accent} !important;
+    border-bottom: 2px solid {accent} !important;
+}}
+[data-baseweb="tab-list"] {{
+    border-bottom: 1px solid {tab_border_btm};
+    margin-bottom: 1.8rem;
+}}
 
 /* ── Input fields ── */
 input, textarea, select,
 [data-testid="stTextInput"] input,
-[data-testid="stNumberInput"] input {
-    background-color: #161b22 !important; border: 1px solid #30363d !important;
-    color: #cdd9e5 !important; border-radius: 6px !important;
-}
+[data-testid="stNumberInput"] input {{
+    background-color: {input_bg} !important;
+    border: 1px solid {input_border} !important;
+    color: {input_color} !important;
+    border-radius: 8px !important;
+}}
+[data-testid="stTextInput"] input:focus,
+[data-testid="stNumberInput"] input:focus {{ border-color: {accent} !important; }}
 
 /* ── Sliders ── */
-[data-testid="stSlider"] .st-bo { background-color: #30363d; }
-[data-testid="stSlider"] .st-bp { background-color: #2ea043; }
+[data-testid="stSlider"] .st-bo {{ background-color: {slider_track}; }}
+[data-testid="stSlider"] .st-bp {{ background-color: {accent}; }}
 
 /* ── Toggle / checkbox ── */
-[data-testid="stCheckbox"] label { color: #cdd9e5 !important; }
+[data-testid="stCheckbox"] label {{ color: {check_label} !important; }}
+div[data-testid="stToggleCollector"] label {{ color: {check_label} !important; }}
 
 /* ── Info / status boxes ── */
-div[data-testid="stInfo"] {
-    background-color: #161b22; border: 1px solid #30363d;
-    border-radius: 6px; color: #768390 !important;
-}
+div[data-testid="stAlert"] {{
+    background: {alert_bg} !important;
+    border: 1px solid {alert_border} !important;
+    border-radius: 10px !important;
+    color: {alert_color} !important;
+}}
+div[data-testid="stAlert"] div {{ color: {alert_div} !important; }}
 
 /* ── Section headers ── */
-.section-header {
-    font-size: 1rem; font-weight: 600; color: #cdd9e5;
-    border-left: 3px solid #2ea043; padding-left: 0.7rem;
-    margin: 1.4rem 0 0.8rem 0; letter-spacing: 0.01em;
-}
+.section-header {{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, {accent} 0%, {accent2} 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    border-left: 4px solid {accent};
+    padding-left: 0.8rem;
+    margin: 1.8rem 0 1.2rem 0;
+    letter-spacing: 0.02em;
+}}
 
 /* ── Progress bar ── */
-[data-testid="stProgress"] > div > div { background-color: #2ea043 !important; }
+[data-testid="stProgress"] > div > div {{
+    background: linear-gradient(90deg, {accent}, {accent2}) !important;
+}}
 
 /* ── DataFrame / tables ── */
-[data-testid="stDataFrame"] { border-radius: 6px; overflow: hidden; }
-.dataframe { background-color: #161b22 !important; color: #cdd9e5 !important; }
-.dataframe th { background-color: #21262d !important; color: #768390 !important; font-weight: 500; }
-.dataframe td { border-color: #30363d !important; }
+[data-testid="stDataFrame"] {{
+    border-radius: 8px; overflow: hidden; border: 1px solid {border};
+}}
+.dataframe {{ background-color: {df_bg} !important; color: {text_primary} !important; }}
+.dataframe th {{ background-color: {df_th_bg} !important; color: {df_th_color} !important; font-weight: 600; }}
+.dataframe td {{ border-color: {df_td_border} !important; }}
 
 /* ── Divider ── */
-hr { border-color: #30363d; margin: 1.2rem 0; }
+hr {{ border-color: {hr_color}; margin: 1.8rem 0; }}
 
 /* ── Spinner ── */
-[data-testid="stSpinner"] { color: #2ea043; }
+[data-testid="stSpinner"] {{ color: {accent}; }}
 
 /* ── Sidebar branding ── */
-.sidebar-brand { padding: 0.2rem 0 0.8rem 0; }
-.sidebar-brand .sb-title { font-size: 14px; font-weight: 500; color: #2ea043; display: block; }
-.sidebar-brand .sb-sub { font-size: 11px; color: #768390; display: block; margin-top: 2px; }
+.sidebar-brand {{ padding: 0.4rem 0 1.2rem 0; }}
+.sidebar-brand .sb-title {{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 17px; font-weight: 700;
+    color: {sb_title}; display: block;
+    letter-spacing: 0.04em;
+}}
+.sidebar-brand .sb-sub {{
+    font-family: 'Outfit', sans-serif; font-size: 10px;
+    color: {sb_sub}; display: block; margin-top: 5px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+}}
+
+/* ── Custom Badges ── */
+.status-badge {{
+    background-color: {badge_bg};
+    border: 1px solid {badge_border};
+    padding: 0.3rem 0.75rem; border-radius: 6px;
+    font-family: monospace; font-weight: 600; color: {accent};
+}}
+.status-badge-blue {{
+    background-color: {badge_bg};
+    border: 1px solid {badge_border};
+    padding: 0.3rem 0.75rem; border-radius: 6px;
+    font-family: monospace; font-weight: 600; color: {badge_blue};
+}}
+.status-container {{
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+    background: {sc_bg}; border: 1px solid {sc_border};
+    padding: 0.8rem 1.2rem; border-radius: 8px; margin-bottom: 1rem;
+}}
+
+/* ── Glassmorphic chart panel ── */
+[data-testid="stPlotlyChart"] {{
+    background: {chart_glass_bg} !important;
+    border: 1px solid {chart_glass_bdr} !important;
+    border-radius: 16px !important;
+    padding: 0.9rem 0.75rem !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    box-shadow: {chart_glass_shd} !important;
+    margin-bottom: 0.75rem !important;
+}}
 </style>
 """, unsafe_allow_html=True)
+
+
+def _get_chart_theme(light_mode: bool = False):
+    """Return (layout_dict, axis_style_dict) tuned for the active palette."""
+    if light_mode:
+        layout = dict(
+            template="plotly_white",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(
+                color="#1e293b",
+                family="'Space Grotesk', 'Outfit', -apple-system, sans-serif",
+            ),
+            margin=dict(l=50, r=30, t=50, b=50),
+        )
+        axis = dict(
+            gridcolor="rgba(0,0,0,0.07)",
+            linecolor="rgba(0,0,0,0.14)",
+            zerolinecolor="rgba(0,0,0,0.14)",
+        )
+    else:
+        layout = dict(
+            template="plotly_dark",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(
+                color="#cbd5e1",
+                family="'Space Grotesk', 'Outfit', -apple-system, sans-serif",
+            ),
+            margin=dict(l=50, r=30, t=50, b=50),
+        )
+        axis = dict(
+            gridcolor="rgba(255,255,255,0.05)",
+            linecolor="rgba(255,255,255,0.08)",
+            zerolinecolor="rgba(255,255,255,0.08)",
+        )
+    return layout, axis
+
+
+# ── Initial theme injection (uses session state from previous run) ─────────────
+_lm_init = st.session_state.get("theme_toggle", False)
+_inject_theme(_lm_init)
 
 
 
@@ -294,7 +562,8 @@ def _import_modules():
     from phase1_models import make_cluster
     from phase2_energy_model import (
         SLOTS_PER_DAY, build_energy_profile, carbon_intensity,
-        energy_at_slot, slot_to_time
+        energy_at_slot, slot_to_time,
+        load_solar_dataset, activate_solar_day, deactivate_solar_dataset
     )
     from phase3_tasks import (
         generate_tasks, load_azure_tasks, describe_workload, ScheduleResult,
@@ -310,6 +579,9 @@ def _import_modules():
         "carbon_intensity": carbon_intensity,
         "energy_at_slot": energy_at_slot,
         "slot_to_time": slot_to_time,
+        "load_solar_dataset": load_solar_dataset,
+        "activate_solar_day": activate_solar_day,
+        "deactivate_solar_dataset": deactivate_solar_dataset,
         "generate_tasks": generate_tasks,
         "load_azure_tasks": load_azure_tasks,
         "describe_workload": describe_workload,
@@ -341,16 +613,9 @@ def _load_tasks_for_dashboard(use_azure: bool, azure_path: str, n_tasks: int, se
     return M["generate_tasks"](n=n_tasks, seed=int(seed), cloudy=cloudy)
 
 
-# ── Plotly dark theme helper ──────────────────────────────────────────────────
-DARK_LAYOUT = dict(
-    template="plotly_dark",
-    paper_bgcolor="#0d1117",
-    plot_bgcolor="#161b22",
-    font=dict(color="#c9d1d9", family="Segoe UI, system-ui, sans-serif"),
-    margin=dict(l=50, r=30, t=50, b=50),
-)
-# Grid colours applied separately so callers can pass their own xaxis/yaxis dicts
-_AXIS_STYLE = dict(gridcolor="#21262d", linecolor="#30363d")
+# ── Plotly theme helpers (rebound after sidebar toggle is read) ───────────────
+# Defaults match dark mode; overridden after the sidebar block.
+DARK_LAYOUT, _AXIS_STYLE = _get_chart_theme(False)
 
 
 def dark_fig(title="", height=380):
@@ -370,21 +635,21 @@ def make_solar_fig(cloudy: bool = False, current_slot: int = -1,
 
     fig = go.Figure()
 
-    # Solar fill
+    # Solar fill - sleeker emerald/teal gradient look
     fig.add_trace(go.Scatter(
         x=times, y=energy,
         fill="tozeroy",
-        fillcolor="rgba(249,202,36,0.18)",
-        line=dict(color="#f9ca24", width=2),
+        fillcolor="rgba(16,185,129,0.08)",
+        line=dict(color="#10b981", width=2.5),
         name="Solar Energy",
     ))
 
-    # Battery SOC overlay
+    # Battery SOC overlay - sleeker electric violet
     if battery_trace and len(battery_trace) > 0:
         batt_x = times[:len(battery_trace)]
         fig.add_trace(go.Scatter(
             x=batt_x, y=battery_trace,
-            line=dict(color="#9b59b6", width=2, dash="dot"),
+            line=dict(color="#8b5cf6", width=2.5, dash="dot"),
             name="Battery SOC %",
             yaxis="y2",
         ))
@@ -395,13 +660,13 @@ def make_solar_fig(cloudy: bool = False, current_slot: int = -1,
             type="line",
             x0=times[current_slot], x1=times[current_slot],
             y0=0, y1=1, yref="paper",
-            line=dict(color="#e74c3c", width=2),
+            line=dict(color="#f43f5e", width=2),
         )
         fig.add_annotation(
             x=times[current_slot], y=1.05, yref="paper",
-            text=f"▶ {times[current_slot]}",
+            text=f"Slot: {times[current_slot]}",
             showarrow=False,
-            font=dict(color="#e74c3c", size=10),
+            font=dict(color="#f43f5e", size=10, family="'Space Grotesk', sans-serif"),
         )
 
     fig.update_layout(
@@ -410,7 +675,8 @@ def make_solar_fig(cloudy: bool = False, current_slot: int = -1,
         xaxis_title="Time of Day",
         yaxis_title="Solar Energy (units)",
         yaxis2=dict(title="Battery SOC %", overlaying="y", side="right",
-                    range=[0, 105], showgrid=False),
+                    range=[0, 105], showgrid=False,
+                    linecolor=_AXIS_STYLE["linecolor"]),
         legend=dict(orientation="h", y=1.08),
         **DARK_LAYOUT,
     )
@@ -426,19 +692,22 @@ def make_server_bar(servers):
     colors = []
     for u in utils:
         if u < 40:
-            colors.append("#3fb950")
+            colors.append("#10b981") # Sleek emerald low load
         elif u < 75:
-            colors.append("#e3b341")
+            colors.append("#f59e0b") # Warning amber medium load
         else:
-            colors.append("#e74c3c")
+            colors.append("#ef4444") # Modern rose high load
 
     fig = go.Figure(go.Bar(
         x=names,
         y=utils,
-        marker_color=colors,
+        marker=dict(
+            color=colors,
+            line=dict(width=1, color="rgba(255,255,255,0.06)")
+        ),
         text=[f"{u}%<br>{l}ms" for u, l in zip(utils, lats)],
         textposition="outside",
-        textfont=dict(size=11),
+        textfont=dict(size=10, family="'Space Grotesk', sans-serif"),
     ))
     fig.update_layout(title="Server Utilisation", height=280, **DARK_LAYOUT)
     fig.update_yaxes(title="Utilisation %", range=[0, 110], **_AXIS_STYLE)
@@ -456,7 +725,7 @@ def make_task_scatter(placed_tasks: list, height=380):
     df = pd.DataFrame(placed_tasks, columns=["slot", "server", "priority", "carbon"])
     df["time"] = df["slot"].apply(slot_to_time)
 
-    color_map = {"critical": "#e74c3c", "high": "#e3b341", "normal": "#3fb950"}
+    color_map = {"critical": "#ef4444", "high": "#f59e0b", "normal": "#10b981"}
 
     fig = go.Figure()
     for prio, grp in df.groupby("priority"):
@@ -466,9 +735,9 @@ def make_task_scatter(placed_tasks: list, height=380):
             mode="markers",
             marker=dict(
                 size=9,
-                color=color_map.get(prio, "#58a6ff"),
+                color=color_map.get(prio, "#3b82f6"),
                 symbol="circle",
-                line=dict(color="#0d1117", width=1),
+                line=dict(color="#07090e", width=1.2),
             ),
             name=prio.capitalize(),
             hovertemplate=(
@@ -620,15 +889,39 @@ with st.sidebar:
   <span class="sb-sub">Carbon-Aware Task Scheduling</span>
 </div>
 """, unsafe_allow_html=True)
+
+    # ── Light / Dark mode toggle ───────────────────────────────────────────
+    light_mode = st.toggle(
+        "Light Mode",
+        key="theme_toggle",
+        help="Switch between dark (default) and light colour palette",
+    )
     st.divider()
-    st.markdown("## ⚙ Simulation Controls")
+    st.markdown("## Simulation Controls")
     st.markdown("---")
 
     n_tasks = st.slider("Number of Tasks", min_value=50, max_value=200, value=100, step=10,
                         help="Total tasks to schedule in the simulation")
 
-    cloudy = st.toggle("☁ Cloudy Day", value=False,
+    cloudy = st.toggle("Simulate Overcast Weather", value=False,
                        help="Reduces solar output by ~45% and tests scheduler resilience")
+
+    use_solar_dataset = st.checkbox("Enable Historical Solar Feed", value=False,
+                                    help="Use real weather radiation data instead of synthetic profile")
+    solar_date = "2016-09-29"
+    if use_solar_dataset:
+        try:
+            available_dates = M["load_solar_dataset"]("SolarPrediction.csv")
+            default_idx = available_dates.index("2016-09-29") if "2016-09-29" in available_dates else 0
+            solar_date = st.selectbox("Select Date", available_dates, index=default_idx,
+                                      help="Select a date from the HI-SEAS weather dataset")
+            M["activate_solar_day"](solar_date, "SolarPrediction.csv")
+        except Exception as e:
+            st.error(f"Failed to load solar dataset: {e}")
+            use_solar_dataset = False
+            M["deactivate_solar_dataset"]()
+    else:
+        M["deactivate_solar_dataset"]()
 
     seed = st.number_input("Random Seed", min_value=0, max_value=9999, value=42, step=1,
                            help="Controls task generation randomness for reproducibility")
@@ -643,12 +936,12 @@ with st.sidebar:
         azure_path = st.text_input("Path to vmtable.csv.gz", value="vmtable.csv.gz")
 
     st.markdown("---")
-    st.markdown("### 📋 Quick Info")
+    st.markdown("### System Parameters")
     st.info(
         f"**Tasks:** {n_tasks}  \n"
-        f"**Day type:** {'Cloudy ☁' if cloudy else 'Clear ☀'}  \n"
-        f"**Time slots:** 96 × 15 min  \n"
-        f"**Schedulers:** 5 algorithms"
+        f"**Solar Feed:** {f'Historical ({solar_date})' if use_solar_dataset else ('Cloudy (Overcast)' if cloudy else 'Clear Sky')}  \n"
+        f"**Time Slots:** 96 × 15 min  \n"
+        f"**Schedulers:** 5 Algorithms"
     )
 
     st.caption(
@@ -656,22 +949,28 @@ with st.sidebar:
         if use_azure else
         "Workload source: Synthetic (simulated)"
     )
-    st.markdown("---")
-    run_bench_btn = st.button("📊 Run Benchmark", key="sidebar_bench")
-    live_sim_btn  = st.button("▶ Start Live Simulation", key="sidebar_live")
+    st.markdown('---')
+    run_bench_btn = st.button("RUN BENCHMARK ENGINE", key="sidebar_bench")
+    live_sim_btn  = st.button("LAUNCH LIVE SIMULATION", key="sidebar_live")
 
+
+# ── Apply theme based on toggle ────────────────────────────────────────────────
+# light_mode is set by the sidebar toggle above; rebind globals so all chart
+# builders (make_solar_fig, make_server_bar, etc.) use the correct palette.
+DARK_LAYOUT, _AXIS_STYLE = _get_chart_theme(light_mode)
+_inject_theme(light_mode)   # second call overrides the early init above
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
+solar_desc = f"Real-World Solar ({solar_date})" if use_solar_dataset else ("Cloudy Solar" if cloudy else "Clear Solar")
 st.info(
-    "Workload source: Azure vmtable (real traces)"
-    if use_azure else
-    "Workload source: Synthetic (simulated)"
+    f"**Workload Trace:** {'Azure VM trace (real)' if use_azure else 'Synthetic (simulated)'} &nbsp;|&nbsp; "
+    f"**Active Solar Supply:** {solar_desc}"
 )
 
 tab_live, tab_bench, tab_battery = st.tabs([
-    "⚡ Live Simulation",
-    "📊 Benchmark",
-    "🔋 Battery & Energy",
+    "LIVE SIMULATION ENGINE",
+    "COMPARATIVE BENCHMARK",
+    "BATTERY & STORAGE ANALYSIS",
 ])
 
 
@@ -687,7 +986,7 @@ with tab_live:
         "switches between AGGRESSIVE / CONSERVATIVE / SHED modes."
     )
 
-    if live_sim_btn or st.button("▶ Start Live Simulation", key="tab_live_btn"):
+    if live_sim_btn or st.button("LAUNCH LIVE SIMULATION", key="tab_live_btn"):
 
         # ── Setup ──────────────────────────────────────────────────────────
         tasks_raw = _load_tasks_for_dashboard(
@@ -825,14 +1124,15 @@ with tab_live:
 
             # ── Update UI ─────────────────────────────────────────────────
             pct = (slot + 1) / SLOTS_PER_DAY
-            progress_bar.progress(pct, text=f"Slot {slot+1}/96 — {slot_to_time(slot)} — Mode: {mode}")
+            progress_bar.progress(pct, text=f"Simulation running... Slot {slot+1}/96 — {slot_to_time(slot)}")
 
             status_text.markdown(
-                f"**🕐 {slot_to_time(slot)}** &nbsp;|&nbsp; "
-                f"Solar: **{solar_energy:.0f}** units &nbsp;|&nbsp; "
-                f"Mode: <span style='color:{'#3fb950' if mode=='AGGRESSIVE' else '#e3b341' if mode=='CONSERVATIVE' else '#e74c3c'}'>"
-                f"**{mode}**</span> &nbsp;|&nbsp; "
-                f"Deferred queue: **{len(deferred)}** tasks",
+                f"<div class='status-container'>"
+                f"<span class='status-badge-blue'>TIME: {slot_to_time(slot)}</span>"
+                f"<span class='status-badge'>SOLAR ENERGY: {solar_energy:.0f} u</span>"
+                f"&nbsp;&nbsp;&bull;&nbsp;&nbsp;Agent State: <span style='font-weight:700; color:{'#10b981' if mode=='AGGRESSIVE' else '#f59e0b' if mode=='CONSERVATIVE' else '#ef4444'}'>{mode}</span>"
+                f"&nbsp;&nbsp;&bull;&nbsp;&nbsp;Workload Queue: <strong>{len(deferred)}</strong> deferred tasks"
+                f"</div>",
                 unsafe_allow_html=True,
             )
 
@@ -908,11 +1208,11 @@ with tab_live:
                 deadline_miss += 1
             grid_tasks += 1
 
-        progress_bar.progress(1.0, text="Simulation complete!")
+        progress_bar.progress(1.0, text="Evaluation complete.")
 
         # ── Final stats ────────────────────────────────────────────────────
         st.markdown("---")
-        st.markdown("### 🏁 Simulation Complete!")
+        st.markdown("### Simulation Run Complete")
 
         s1, s2, s3, s4, s5 = st.columns(5)
         with s1:
@@ -938,7 +1238,7 @@ with tab_live:
             labels=list(mode_counts.keys()),
             values=list(mode_counts.values()),
             hole=0.45,
-            marker_colors=["#3fb950", "#e3b341", "#e74c3c"],
+            marker_colors=["#10b981", "#f59e0b", "#ef4444"],
         ))
         fig_pie.update_layout(
             title="Agent Mode Distribution",
@@ -948,7 +1248,7 @@ with tab_live:
         st.plotly_chart(fig_pie, width="stretch")
 
     else:
-        st.info("👈 Configure settings in the sidebar, then click **▶ Start Live Simulation** to begin.")
+        st.info("Configure the parameters in the sidebar control panel and click 'Launch Live Simulation' to start the execution.")
 
         # Static preview of solar curve
         st.markdown('<div class="section-header">Solar Energy Preview</div>', unsafe_allow_html=True)
@@ -967,7 +1267,7 @@ with tab_bench:
         "deadline adherence, and latency. Charts are interactive — hover for details."
     )
 
-    if run_bench_btn or st.button("🚀 Run All Schedulers", key="bench_run"):
+    if run_bench_btn or st.button("RUN SCHEDULER EVALUATIONS", key="bench_run"):
         with st.spinner("Running benchmark — this may take a few seconds…"):
             tasks_raw = _load_tasks_for_dashboard(
                 use_azure=use_azure,
@@ -995,11 +1295,11 @@ with tab_bench:
             ]
 
             COLORS_MAP = {
-                "RoundRobin":    "#e74c3c",
-                "GreedyEDF":     "#e67e22",
-                "DPScheduler":   "#3498db",
-                "AgenticDP":     "#2ecc71",
-                "BatteryAwareDP":"#9b59b6",
+                "RoundRobin":    "#ef4444",
+                "GreedyEDF":     "#f59e0b",
+                "DPScheduler":   "#3b82f6",
+                "AgenticDP":     "#10b981",
+                "BatteryAwareDP":"#8b5cf6",
             }
 
             results = {}
@@ -1028,18 +1328,19 @@ with tab_bench:
             fig1 = make_subplots(specs=[[{"secondary_y": True}]])
             fig1.add_trace(
                 go.Scatter(x=times, y=energy, fill="tozeroy",
-                           fillcolor="rgba(249,202,36,0.18)",
-                           line=dict(color="#f9ca24", width=2), name="Solar Energy"),
+                           fillcolor="rgba(16,185,129,0.08)",
+                           line=dict(color="#10b981", width=2.5), name="Solar Energy"),
                 secondary_y=False,
             )
             fig1.add_trace(
                 go.Scatter(x=times, y=ci_vals,
-                           line=dict(color="#e74c3c", width=1.8, dash="dash"),
+                           line=dict(color="#ef4444", width=1.8, dash="dash"),
                            name="Carbon Intensity"),
                 secondary_y=True,
             )
+            solar_title = f"Solar Energy Profile - Real-world Dataset ({solar_date})" if use_solar_dataset else f"Solar Energy Profile {'(Cloudy)' if cloudy else '(Clear)'}"
             fig1.update_layout(
-                title=f"Solar Energy Profile {'(Cloudy)' if cloudy else '(Clear)'}",
+                title=solar_title,
                 height=380,
                 **DARK_LAYOUT,
             )
@@ -1165,7 +1466,7 @@ with tab_bench:
             )
 
     else:
-        st.info("👈 Click **Run All Schedulers** or use the sidebar button to start the benchmark.")
+        st.info("Click RUN SCHEDULER EVALUATIONS or use the sidebar button to start the benchmark.")
 
         # Static solar preview
         st.markdown('<div class="section-header">Solar Energy Preview</div>', unsafe_allow_html=True)
@@ -1174,10 +1475,11 @@ with tab_bench:
         times  = [slot_to_time(s) for s in slots]
         fig_prev = go.Figure(go.Scatter(
             x=times, y=energy, fill="tozeroy",
-            fillcolor="rgba(249,202,36,0.18)",
-            line=dict(color="#f9ca24", width=2), name="Solar Energy",
+            fillcolor="rgba(16,185,129,0.08)",
+            line=dict(color="#10b981", width=2.5), name="Solar Energy",
         ))
-        fig_prev.update_layout(title="Solar Energy Profile (preview)", height=350, **DARK_LAYOUT)
+        preview_title = f"Solar Energy Profile (Real-world preview - {solar_date})" if use_solar_dataset else f"Solar Energy Profile (preview - {'Cloudy' if cloudy else 'Clear'})"
+        fig_prev.update_layout(title=preview_title, height=350, **DARK_LAYOUT)
         fig_prev.update_xaxes(tickangle=-45, tickvals=times[::8], **_AXIS_STYLE)
         fig_prev.update_yaxes(**_AXIS_STYLE)
         st.plotly_chart(fig_prev, width="stretch")
@@ -1195,7 +1497,7 @@ with tab_battery:
         "an additional **5–8% carbon reduction** over the vanilla DP scheduler."
     )
 
-    if st.button("🔋 Run Battery Analysis", key="battery_run"):
+    if st.button("RUN BATTERY PERFORMANCE ANALYSIS", key="battery_run"):
         with st.spinner("Running DP vs Battery-Aware DP comparison…"):
             tasks_raw = _load_tasks_for_dashboard(
                 use_azure=use_azure,
@@ -1256,15 +1558,15 @@ with tab_battery:
         fig_batt = make_subplots(specs=[[{"secondary_y": True}]])
         fig_batt.add_trace(
             go.Scatter(x=times, y=energy, fill="tozeroy",
-                       fillcolor="rgba(249,202,36,0.15)",
-                       line=dict(color="#f9ca24", width=2),
+                       fillcolor="rgba(16,185,129,0.08)",
+                       line=dict(color="#10b981", width=2.5),
                        name="Solar Energy"),
             secondary_y=False,
         )
         if soc_trace:
             fig_batt.add_trace(
                 go.Scatter(x=times[:len(soc_trace)], y=soc_trace,
-                           line=dict(color="#9b59b6", width=2.5),
+                           line=dict(color="#8b5cf6", width=2.5),
                            name="Battery SOC %"),
                 secondary_y=True,
             )
@@ -1274,8 +1576,9 @@ with tab_battery:
             xaxis=dict(tickangle=-45, tickvals=times[::8]),
             **DARK_LAYOUT,
         )
-        fig_batt.update_yaxes(title_text="Solar Energy (units)", secondary_y=False)
-        fig_batt.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True)
+        fig_batt.update_xaxes(**_AXIS_STYLE)
+        fig_batt.update_yaxes(title_text="Solar Energy (units)", secondary_y=False, **_AXIS_STYLE)
+        fig_batt.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True, showgrid=False, linecolor=_AXIS_STYLE["linecolor"])
         st.plotly_chart(fig_batt, width="stretch")
 
         # ── Chart 2: Battery charge/discharge events ───────────────────────
@@ -1294,7 +1597,7 @@ with tab_battery:
                     x=charge_df["time"],
                     y=charge_df["amount"],
                     name="Charge (Solar → Battery)",
-                    marker_color="#3fb950",
+                    marker_color="#10b981",
                     opacity=0.85,
                 ))
             if not discharge_df.empty:
@@ -1302,7 +1605,7 @@ with tab_battery:
                     x=discharge_df["time"],
                     y=[-v for v in discharge_df["amount"]],
                     name="Discharge (Battery → Tasks)",
-                    marker_color="#e74c3c",
+                    marker_color="#ef4444",
                     opacity=0.85,
                 ))
             fig_events.update_layout(
@@ -1313,6 +1616,8 @@ with tab_battery:
                 height=380,
                 **DARK_LAYOUT,
             )
+            fig_events.update_xaxes(**_AXIS_STYLE)
+            fig_events.update_yaxes(**_AXIS_STYLE)
             st.plotly_chart(fig_events, width="stretch")
         else:
             st.info("No battery events recorded. Try increasing the task load or changing parameters.")
@@ -1324,7 +1629,7 @@ with tab_battery:
         fig_comp = go.Figure(go.Bar(
             x=["DP Scheduler", "Battery-Aware DP"],
             y=[dp_res.total_carbon_g, ba_res.total_carbon_g],
-            marker_color=["#3498db", "#9b59b6"],
+            marker_color=["#3b82f6", "#8b5cf6"],
             text=[f"{dp_res.total_carbon_g:.0f} gCO₂", f"{ba_res.total_carbon_g:.0f} gCO₂"],
             textposition="outside",
             textfont=dict(size=13),
@@ -1335,7 +1640,7 @@ with tab_battery:
             xref="x", yref="y",
             text=f"Battery saves {saving_pct:.1f}% more carbon",
             showarrow=False,
-            font=dict(size=14, color="#3fb950"),
+            font=dict(size=14, color="#10b981", family="'Space Grotesk', sans-serif"),
         )
         fig_comp.update_layout(
             title="Carbon Emissions: Standard DP vs Battery-Aware DP",
@@ -1344,6 +1649,8 @@ with tab_battery:
             height=380,
             **DARK_LAYOUT,
         )
+        fig_comp.update_xaxes(**_AXIS_STYLE)
+        fig_comp.update_yaxes(**_AXIS_STYLE)
         st.plotly_chart(fig_comp, width="stretch")
 
         # ── Battery summary table ──────────────────────────────────────────
@@ -1366,7 +1673,7 @@ with tab_battery:
         st.dataframe(pd.DataFrame(batt_data).set_index("Metric"), width="stretch")
 
     else:
-        st.info("Click **Run Battery Analysis** to compare standard DP vs Battery-Aware DP.")
+        st.info("Click RUN BATTERY PERFORMANCE ANALYSIS to compare standard DP vs Battery-Aware DP.")
 
         # Explainer
         st.markdown('<div class="section-header">How Battery Storage Works</div>',
@@ -1421,14 +1728,14 @@ with tab_battery:
         fig_ill = make_subplots(specs=[[{"secondary_y": True}]])
         fig_ill.add_trace(
             go.Scatter(x=times, y=energy, fill="tozeroy",
-                       fillcolor="rgba(249,202,36,0.15)",
-                       line=dict(color="#f9ca24", width=2),
+                       fillcolor="rgba(16,185,129,0.08)",
+                       line=dict(color="#10b981", width=2.5),
                        name="Solar Energy"),
             secondary_y=False,
         )
         fig_ill.add_trace(
             go.Scatter(x=times, y=synthetic_soc,
-                       line=dict(color="#9b59b6", width=2.5),
+                       line=dict(color="#8b5cf6", width=2.5),
                        name="Battery SOC % (illustrative)"),
             secondary_y=True,
         )
@@ -1438,8 +1745,9 @@ with tab_battery:
             xaxis=dict(tickangle=-45, tickvals=times[::8]),
             **DARK_LAYOUT,
         )
-        fig_ill.update_yaxes(title_text="Solar Energy (units)", secondary_y=False)
-        fig_ill.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True)
+        fig_ill.update_xaxes(**_AXIS_STYLE)
+        fig_ill.update_yaxes(title_text="Solar Energy (units)", secondary_y=False, **_AXIS_STYLE)
+        fig_ill.update_yaxes(title_text="Battery SOC (%)", range=[0, 105], secondary_y=True, showgrid=False, linecolor=_AXIS_STYLE["linecolor"])
         st.plotly_chart(fig_ill, width="stretch")
 
 
