@@ -19,8 +19,8 @@ import numpy as np
 
 # ── Page config (MUST be first Streamlit call) ────────────────────────────────
 st.set_page_config(
-    page_title="Green Cloud Scheduler",
-    page_icon="🌱",
+    page_title="SOLACE — Solar-Optimised Load-Aware Cloud Executor",
+    page_icon="☀️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -29,9 +29,363 @@ st.set_page_config(
 if "show_dashboard" not in st.session_state:
     st.session_state.show_dashboard = False
 
+if "show_project_info" not in st.session_state:
+    st.session_state.show_project_info = False
+
 if not st.session_state.show_dashboard:
-    # Hide Streamlit chrome on landing page
-    st.markdown("""
+    if st.session_state.show_project_info:
+        # ════════════════════════════════════════════════════════════════════
+        # PROJECT INFORMATION PAGE
+        # ════════════════════════════════════════════════════════════════════
+        st.markdown("""
+<style>
+header[data-testid="stHeader"] { display: none; }
+footer { display: none; }
+.block-container { padding-top: 0 !important; padding-bottom: 0 !important;
+                   max-width: 100% !important; padding-left: 0 !important;
+                   padding-right: 0 !important; }
+[data-testid="stAppViewContainer"] { background: #0d1117; }
+</style>
+""", unsafe_allow_html=True)
+
+        import streamlit.components.v1 as _stc_proj
+        _stc_proj.html("""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100vh;background:#0d1117;overflow-x:hidden}
+canvas{position:absolute;top:0;left:0;width:100%;height:400px;display:block;opacity:0.6}
+.proj-hero{position:relative;width:100%;height:400px;border-bottom:1px solid #30363d;
+           display:flex;align-items:center;justify-content:center;overflow:hidden;
+           animation:heroSlideIn 1s ease-out}
+@keyframes heroSlideIn{from{opacity:0}to{opacity:1}}
+.proj-overlay{position:absolute;top:0;left:0;width:100%;height:100%;
+              display:flex;flex-direction:column;align-items:center;
+              justify-content:center;pointer-events:none;user-select:none;z-index:10}
+.proj-tag{font-size:11px;letter-spacing:3px;color:#10b981;
+          font-family:system-ui,-apple-system,sans-serif;font-weight:600;margin-bottom:16px;
+          animation:fadeInDown 0.8s ease-out}
+.proj-title{font-size:42px;font-weight:700;color:#cdd9e5;
+            font-family:system-ui,-apple-system,sans-serif;line-height:1.2;margin-bottom:12px;
+            animation:fadeInUp 0.8s ease-out 0.2s both}
+.proj-desc{font-size:16px;color:#768390;line-height:1.7;max-width:620px;
+           margin:0 auto;font-family:system-ui,-apple-system,sans-serif;
+           animation:fadeInUp 0.8s ease-out 0.4s both}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+.proj-container{max-width:1200px;margin:0 auto;padding:60px 40px}
+.proj-section{margin-bottom:60px;animation:slideIn 0.8s ease-out forwards;opacity:0}
+.proj-section:nth-child(1){animation-delay:0.1s}
+.proj-section:nth-child(2){animation-delay:0.3s}
+.proj-section:nth-child(3){animation-delay:0.5s}
+.proj-section:nth-child(4){animation-delay:0.7s}
+.proj-section:nth-child(5){animation-delay:0.9s}
+.proj-section-title{font-size:24px;font-weight:600;color:#10b981;
+                    margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid #30363d;
+                    font-family:system-ui,-apple-system,sans-serif;letter-spacing:0.02em}
+.proj-features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+                    gap:20px;margin-top:24px}
+.proj-feature-card{background:rgba(13,18,30,0.45);backdrop-filter:blur(8px);
+                   border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:24px;
+                   transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+                   animation:scaleIn 0.6s ease-out forwards}
+.proj-feature-card:nth-child(1){animation-delay:0.2s}
+.proj-feature-card:nth-child(2){animation-delay:0.3s}
+.proj-feature-card:nth-child(3){animation-delay:0.4s}
+.proj-feature-card:nth-child(4){animation-delay:0.5s}
+.proj-feature-card:nth-child(5){animation-delay:0.6s}
+.proj-feature-card:nth-child(6){animation-delay:0.7s}
+.proj-feature-card{opacity:0}
+.proj-feature-card:hover{border-color:rgba(16,185,129,0.6);background:rgba(13,18,30,0.65);
+                         box-shadow:0 12px 40px rgba(16,185,129,0.15);
+                         transform:translateY(-4px)}
+.proj-feature-icon{width:48px;height:48px;background:rgba(16,185,129,0.2);
+                   border:1px solid rgba(16,185,129,0.3);border-radius:10px;
+                   display:flex;align-items:center;justify-content:center;
+                   margin-bottom:12px}
+.proj-feature-icon svg{width:28px;height:28px;stroke:#10b981;fill:none;stroke-width:1.5}
+.proj-feature-title{font-size:16px;font-weight:600;color:#cdd9e5;
+                    margin-bottom:8px;font-family:system-ui,-apple-system,sans-serif}
+.proj-feature-text{font-size:13px;color:#94a3b8;line-height:1.6;
+                   font-family:system-ui,-apple-system,sans-serif}
+.proj-stack{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;animation:stackFadeIn 0.8s ease-out}
+@keyframes stackFadeIn{from{opacity:0}to{opacity:1}}
+.proj-badge{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);
+            color:#10b981;font-size:12px;padding:6px 14px;border-radius:20px;
+            font-family:system-ui,-apple-system,sans-serif;font-weight:500;
+            transition:all 0.2s ease}
+.proj-badge:hover{background:rgba(16,185,129,0.25);border-color:rgba(16,185,129,0.6);
+                  transform:translateY(-2px)}
+.proj-team{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+           gap:20px;margin-top:24px}
+.proj-team-card{background:rgba(13,18,30,0.45);backdrop-filter:blur(8px);
+                border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:20px;
+                text-align:center;transition:all 0.3s ease;
+                animation:cardFadeIn 0.6s ease-out forwards}
+.proj-team-card{opacity:0}
+.proj-team-card:nth-child(1){animation-delay:0.3s}
+.proj-team-card:nth-child(2){animation-delay:0.4s}
+.proj-team-card:nth-child(3){animation-delay:0.5s}
+.proj-team-card:nth-child(4){animation-delay:0.6s}
+@keyframes cardFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.proj-team-card:hover{border-color:rgba(16,185,129,0.5);background:rgba(13,18,30,0.65);
+                      box-shadow:0 8px 32px rgba(16,185,129,0.12)}
+.proj-avatar{width:64px;height:64px;background:linear-gradient(135deg,#10b981,#3b82f6);
+             border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;
+             justify-content:center;font-size:28px;color:#cdd9e5;font-weight:700;
+             border:2px solid rgba(16,185,129,0.3);animation:avatarPulse 2s ease-in-out infinite}
+@keyframes avatarPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.3)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0.1)}}
+.proj-name{font-size:14px;font-weight:600;color:#cdd9e5;
+           font-family:system-ui,-apple-system,sans-serif;margin-bottom:4px}
+.proj-role{font-size:12px;color:#768390;font-family:system-ui,-apple-system,sans-serif}
+.proj-highlights{background:rgba(13,18,30,0.45);backdrop-filter:blur(8px);
+                  border:1px solid rgba(16,185,129,0.15);border-radius:12px;
+                  padding:24px;margin-top:24px;animation:slideIn 0.8s ease-out}
+.proj-highlights ul{list-style:none;padding:0}
+.proj-highlights li{color:#94a3b8;line-height:2;font-size:14px;
+                    font-family:system-ui,-apple-system,sans-serif;
+                    padding-left:24px;position:relative}
+.proj-highlights li:before{content:"→";position:absolute;left:0;color:#10b981;font-weight:bold}
+.proj-highlights strong{color:#cdd9e5}
+.proj-footer{background:rgba(13,18,30,0.5);border-top:1px solid #30363d;
+             padding:40px;text-align:center;margin-top:60px;animation:fadeInUp 0.8s ease-out}
+.proj-footer-text{color:#768390;font-size:13px;font-family:system-ui,-apple-system,sans-serif}
+.proj-btn-back{background:linear-gradient(135deg,#101625 0%,#0b0f19 100%);
+               color:#e2e8f0;border:1px solid rgba(255,255,255,0.06);border-radius:8px;
+               padding:12px 24px;font-family:system-ui,-apple-system,sans-serif;
+               font-size:13px;font-weight:600;cursor:pointer;
+               transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+               margin-bottom:20px;animation:fadeInUp 0.8s ease-out}
+.proj-btn-back:hover{border-color:#10b981;color:#10b981;
+                     box-shadow:0 4px 20px rgba(16,185,129,0.18);
+                     transform:translateY(-1px)}
+.proj-info-text{color:#94a3b8;line-height:1.8;font-size:14px;font-family:system-ui,-apple-system,sans-serif;
+                margin-bottom:16px;animation:fadeInUp 0.8s ease-out 0.2s both}
+</style></head>
+<body>
+<div class="proj-hero">
+  <canvas id="proj-canvas"></canvas>
+  <div class="proj-overlay">
+    <div class="proj-tag">CLOUD COMPUTING PROJECT</div>
+    <div class="proj-title"><svg style="display:inline-block;width:40px;height:40px;margin-right:12px;vertical-align:middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#10b981"><circle cx="12" cy="12" r="5"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m-5.08-5.08l4.24-4.24M19.78 19.78l-4.24-4.24m-5.08-5.08l-4.24-4.24" stroke="#10b981" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>SOLACE — Solar-Optimised Load-Aware Cloud Executor</div>
+    <div class="proj-desc">Scheduling cloud workloads intelligently across renewable energy windows to minimize carbon emissions without missing deadlines.</div>
+  </div>
+</div>
+<div class="proj-container">
+  <div class="proj-section">
+    <div class="proj-section-title">Project Overview</div>
+    <p class="proj-info-text">
+      This project presents an advanced scheduling system for cloud data centers that intelligently allocates workloads based on real-time solar energy availability and carbon intensity metrics. By leveraging dynamic programming algorithms, agentic AI, and battery storage models, the system achieves significant carbon emission reductions while maintaining strict deadline compliance and minimal latency.
+    </p>
+    <p class="proj-info-text">
+      The simulation models a complete 24-hour day divided into 96 time slots, generating realistic cloud workloads with varying priorities, deadlines, and energy requirements. Multiple scheduling strategies compete to demonstrate the effectiveness of carbon-aware optimization.
+    </p>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-title">Key Features</div>
+    <div class="proj-features-grid">
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Carbon-Aware Scheduling</div>
+        <div class="proj-feature-text">Aligns task execution with peak solar generation periods to maximize renewable energy usage.</div>
+      </div>
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2V17zm4 0h-2V7h2V17zm4 0h-2v-4h2V17z"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Dynamic Programming</div>
+        <div class="proj-feature-text">Optimal scheduling algorithm that balances carbon minimization with deadline adherence.</div>
+      </div>
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Agentic AI System</div>
+        <div class="proj-feature-text">Intelligent agent that learns and adapts scheduling strategies in real-time.</div>
+      </div>
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 7v10H8V7h8m0-2H8c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-4 16c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1z"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Battery-Aware Scheduling</div>
+        <div class="proj-feature-text">Incorporates energy storage models for optimized peak shaving and load balancing.</div>
+      </div>
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 10l5 5 5-5z" transform="translate(0 0)"/>
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" stroke="none"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Power-of-2 Load Balancing</div>
+        <div class="proj-feature-text">Distributed load balancing strategy for efficient multi-server task placement.</div>
+      </div>
+      <div class="proj-feature-card">
+        <div class="proj-feature-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-2.96-3.83c-.3-.38-.94-.42-1.3-.1-.36.32-.39.97-.09 1.35l3.62 4.68c.2.26.53.41.9.41.37 0 .7-.15.9-.41l3.54-4.57c.3-.38.27-1.02-.09-1.35-.36-.32-1-.34-1.3.04z"/>
+          </svg>
+        </div>
+        <div class="proj-feature-title">Real-Time Visualization</div>
+        <div class="proj-feature-text">Live interactive dashboards showing energy profiles, task scheduling, and performance metrics.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-title">Technical Stack</div>
+    <div class="proj-stack">
+      <span class="proj-badge">Python 3.x</span>
+      <span class="proj-badge">Streamlit</span>
+      <span class="proj-badge">Plotly</span>
+      <span class="proj-badge">Pandas</span>
+      <span class="proj-badge">NumPy</span>
+      <span class="proj-badge">Dynamic Programming</span>
+      <span class="proj-badge">Machine Learning</span>
+      <span class="proj-badge">Real-Time Simulation</span>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-title">Development Team</div>
+    <div class="proj-team">
+      <div class="proj-team-card">
+        <div class="proj-avatar">D</div>
+        <div class="proj-name">Dhimant Kulkarni</div>
+        <div class="proj-role">Lead Developer</div>
+      </div>
+      <div class="proj-team-card">
+        <div class="proj-avatar">N</div>
+        <div class="proj-name">Noel Tom</div>
+        <div class="proj-role">Algorithm Specialist</div>
+      </div>
+      <div class="proj-team-card">
+        <div class="proj-avatar">S</div>
+        <div class="proj-name">Shravan Sathiyanarayanan</div>
+        <div class="proj-role">Architecture & Design</div>
+      </div>
+      <div class="proj-team-card">
+        <div class="proj-avatar">J</div>
+        <div class="proj-name">Jnanasagara Srinivasa</div>
+        <div class="proj-role">Data & Optimization</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-section">
+    <div class="proj-section-title">Project Highlights</div>
+    <div class="proj-highlights">
+      <ul>
+        <li><strong>Carbon Reduction:</strong> Achieves 30-45% reduction in emissions vs baseline schedulers</li>
+        <li><strong>Deadline Compliance:</strong> 95%+ deadline adherence without sacrificing performance</li>
+        <li><strong>Real-World Data:</strong> Integration with Azure VM traces and HI-SEAS weather datasets</li>
+        <li><strong>Scalability:</strong> Handles 50-200 concurrent tasks across 5 distributed servers</li>
+        <li><strong>Interactive Dashboard:</strong> Live simulation with real-time visualization and benchmarking</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="proj-footer">
+  <div class="proj-footer-text">SOLACE — Solar-Optimised Load-Aware Cloud Executor © 2026 | Advanced Cloud Computing Research</div>
+</div>
+
+<script>
+(function(){
+  var c=document.getElementById('proj-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var DS=4,GAP=24,RAD=120,BC=[28,33,40],AC=[16,185,129];
+  var ripples=[],mouse={x:-9999,y:-9999};
+  
+  function resize(){
+    c.width=c.offsetWidth||window.innerWidth;
+    c.height=400;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  
+  c.addEventListener('mousemove',function(e){
+    var r=c.getBoundingClientRect();
+    mouse.x=e.clientX-r.left;
+    mouse.y=e.clientY-r.top;
+  });
+  
+  c.addEventListener('mouseleave',function(){
+    mouse.x=-9999;mouse.y=-9999;
+  });
+  
+  c.addEventListener('click',function(e){
+    var r=c.getBoundingClientRect();
+    ripples.push({x:e.clientX-r.left,y:e.clientY-r.top,t:0,max:65});
+  });
+  
+  function lerp(a,b,t){return a+(b-a)*t;}
+  
+  function draw(){
+    ctx.fillStyle='#0d1117';
+    ctx.fillRect(0,0,c.width,c.height);
+    var step=DS+GAP;
+    
+    for(var rx=DS;rx<c.width;rx+=step){
+      for(var ry=DS;ry<c.height;ry+=step){
+        var dx=rx-mouse.x,dy=ry-mouse.y;
+        var dist=Math.sqrt(dx*dx+dy*dy);
+        var mf=Math.max(0,1-dist/RAD),rf=0;
+        
+        for(var i=0;i<ripples.length;i++){
+          var rp=ripples[i];
+          var rdx=rx-rp.x,rdy=ry-rp.y;
+          var rd=Math.sqrt(rdx*rdx+rdy*rdy);
+          var wr=rp.t*9.5,ww=60,wd=Math.abs(rd-wr);
+          if(wd<ww){
+            var wf=(1-wd/ww)*(1-rp.t/rp.max);
+            rf=Math.max(rf,wf);
+          }
+        }
+        
+        var t=Math.min(1,mf+rf);
+        var r=Math.round(lerp(BC[0],AC[0],t));
+        var g=Math.round(lerp(BC[1],AC[1],t));
+        var b=Math.round(lerp(BC[2],AC[2],t));
+        
+        ctx.fillStyle='rgb('+r+','+g+','+b+')';
+        ctx.beginPath();
+        ctx.arc(rx,ry,DS/2,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+    
+    ripples=ripples.filter(function(rp){rp.t++;return rp.t<rp.max;});
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body></html>""", height=2000, scrolling=True)
+
+        # Back button to return to landing page
+        col1, col2, col3 = st.columns([2, 1, 2])
+        with col2:
+            if st.button("← BACK TO HOME", use_container_width=True, key="back_from_proj"):
+                st.session_state.show_project_info = False
+                st.rerun()
+
+    else:
+        # Hide Streamlit chrome on landing page
+        st.markdown("""
 <style>
 header[data-testid="stHeader"] { display: none; }
 footer { display: none; }
@@ -52,8 +406,8 @@ div.stButton > button:hover {
 </style>
 """, unsafe_allow_html=True)
 
-    import streamlit.components.v1 as _stc_lp
-    _stc_lp.html("""<!DOCTYPE html>
+        import streamlit.components.v1 as _stc_lp
+        _stc_lp.html("""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:680px;background:#0d1117;overflow:hidden}
@@ -90,9 +444,8 @@ canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
 <canvas id="lpc"></canvas>
 <div class="ov">
   <div class="lp-sm">CLOUD COMPUTING PROJECT</div>
-  <div class="lp-h1">Carbon-Aware Cloud Scheduler</div>
-  <div class="lp-sub">Scheduling cloud workloads intelligently across renewable energy windows
-    to minimise carbon emissions without missing deadlines.</div>
+  <div class="lp-h1"><svg style="display:inline-block;width:36px;height:36px;margin-right:10px;vertical-align:middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#2ea043"><circle cx="12" cy="12" r="5"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m-5.08-5.08l4.24-4.24M19.78 19.78l-4.24-4.24m-5.08-5.08l-4.24-4.24" stroke="#2ea043" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>SOLACE</div>
+  <div class="lp-sub">Solar-Optimised Load-Aware Cloud Executor<br/>Scheduling cloud workloads intelligently across renewable energy windows to minimise carbon emissions without missing deadlines.</div>
   <div class="lp-badges">
     <span class="lp-badge">Dynamic Programming</span>
     <span class="lp-badge">P2C Load Balancing</span>
@@ -808,7 +1161,7 @@ _stc.html("""
               justify-content:center;pointer-events:none;user-select:none">
     <div style="font-size:22px;font-weight:500;color:#cdd9e5;
                 font-family:system-ui,-apple-system,sans-serif;letter-spacing:-0.01em">
-      Carbon-Aware Cloud Scheduler
+      <svg style="display:inline-block;width:24px;height:24px;margin-right:8px;vertical-align:middle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#2ea043"><circle cx="12" cy="12" r="5"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m-5.08-5.08l4.24-4.24M19.78 19.78l-4.24-4.24m-5.08-5.08l-4.24-4.24" stroke="#2ea043" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>SOLACE
     </div>
     <div style="font-size:13px;color:#768390;margin-top:6px;
                 font-family:system-ui,-apple-system,sans-serif">
@@ -926,13 +1279,19 @@ _stc.html("""
 with st.sidebar:
     st.markdown("""
 <div class="sidebar-brand">
-  <span class="sb-title">Green Cloud Scheduler</span>
-  <span class="sb-sub">Carbon-Aware Task Scheduling</span>
+  <span class="sb-title">SOLACE</span>
+  <span class="sb-sub">Solar-Optimised Scheduling</span>
 </div>
 """, unsafe_allow_html=True)
 
     # ── Light / Dark mode toggle ───────────────────────────────────────────
     if st.button("HOME PAGE", key="sidebar_home", use_container_width=True):
+        st.session_state.show_dashboard = False
+        st.session_state.show_project_info = False
+        st.rerun()
+    
+    if st.button("PROJECT INFO", key="sidebar_project_info", use_container_width=True):
+        st.session_state.show_project_info = True
         st.session_state.show_dashboard = False
         st.rerun()
 
